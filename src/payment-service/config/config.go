@@ -18,7 +18,7 @@ type Config struct {
 // LoadConfig reads environment variables and loads them into a Config struct.
 func LoadConfig() (*Config, error) {
 	// Load .env file if it exists
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("C:/Users/atul/OneDrive/Desktop/Golang/Projects/Payment-Processing-System/src/payment-service/.env"); err != nil {
 		log.Println("No .env file found, relying on environment variables.")
 	}
 

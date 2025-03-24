@@ -17,7 +17,7 @@ func NewPostgresStore(db *sql.DB) *PostgresStore {
 
 // SavePayment inserts a new payment record into the database
 func (ps *PostgresStore) SavePayment(payment models.Payment) error {
-	query := "INSERT INTO payments (id, amount, currency, status, created_at) VALUES ($1, $2, $3, $4)"
+	query := "INSERT INTO payments (id, amount, currency, status) VALUES ($1, $2, $3, $4)"
 	_, err := ps.DB.Exec(query, payment.ID, payment.Amount, payment.Currency, payment.Status)
 	if err != nil {
 		log.Printf("Error saving payment: %v", err)
@@ -28,7 +28,7 @@ func (ps *PostgresStore) SavePayment(payment models.Payment) error {
 
 // GetPaymentByID retrieves a payment record by ID
 func (ps *PostgresStore) GetPaymentByID(paymentID string) (*models.Payment, error) {
-	query := "SELECT id, amount, currency, status, created_at FROM payments WHERE id=$1"
+	query := "SELECT id, amount, currency, status FROM payments WHERE id=$1"
 	row := ps.DB.QueryRow(query, paymentID)
 
 	var payment models.Payment

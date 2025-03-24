@@ -31,10 +31,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	store := store.NewPostgresStore(db)
 
 	// Initialize Kafka Producer
-	kafkaProducer, err := services.NewKafkaProducer(cfg.KafkaBroker)
-	if err != nil {
-		return nil, logError("Failed to initialize Kafka producer: %v", err)
-	}
+	kafkaProducer := services.NewKafkaProducer(cfg.KafkaBroker) // No error return needed
 
 	// Initialize Services
 	paymentService := services.NewPaymentService(store, kafkaProducer)
@@ -60,7 +57,7 @@ func setupRouter(paymentHandler *handlers.PaymentHandler, webhookHandler *handle
 
 	// Define routes
 	r.POST("/payments", paymentHandler.InitiatePayment)           // Initiate a payment
-	r.POST("/stripe/webhook", webhookHandler.HandleStripeWebhook) // Handle Stripe events
+	r.POST("/webhook/stripe", webhookHandler.HandleStripeWebhook) // Handle Stripe events
 
 	return r
 }

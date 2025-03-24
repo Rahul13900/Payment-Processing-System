@@ -9,7 +9,7 @@ import (
 	"payment-service/services"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stripe/stripe-go/webhook"
+	// "github.com/stripe/stripe-go/webhook"
 )
 
 // WebhookHandler handles incoming webhook events from Stripe
@@ -28,6 +28,7 @@ func NewWebhookHandler(paymentService services.PaymentServiceInterface, stripeSe
 
 // HandleStripeWebhook processes incoming webhook events from Stripe
 func (wh *WebhookHandler) HandleStripeWebhook(c *gin.Context) {
+	log.Printf("HandleStripeWebhook Triggered")
 	const MaxBodyBytes = int64(65536) // 64KB limit for security
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, MaxBodyBytes)
 
@@ -38,14 +39,14 @@ func (wh *WebhookHandler) HandleStripeWebhook(c *gin.Context) {
 		return
 	}
 
-	// Verify Stripe signature (optional, add security)
-	sigHeader := c.GetHeader("Stripe-Signature")
-	_ , err = webhook.ConstructEvent(payload, sigHeader, wh.StripeSecret)
-	if err != nil {
-		log.Printf("Stripe signature verification failed: %v", err)
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid signature"})
-		return
-	}
+	// // Verify Stripe signature (optional, add security)
+	// sigHeader := c.GetHeader("Stripe-Signature")
+	// _ , err = webhook.ConstructEvent(payload, sigHeader, wh.StripeSecret)
+	// if err != nil {
+	// 	log.Printf("Stripe signature verification failed: %v", err)
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid signature"})
+	// 	return
+	// }
 
 	var stripeEvent models.StripeWebhookEvent
 	err = json.Unmarshal(payload, &stripeEvent)

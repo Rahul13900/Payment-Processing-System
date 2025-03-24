@@ -39,11 +39,13 @@ func (s *paymentService) ProcessPayment(req models.PaymentRequest) (*models.Paym
 	if req.Amount <= 0 {
 		return nil, errors.New("invalid payment amount")
 	}
-
+	stripe.Key = "sk_test_51QuW19RxJOEMEci0mHGC0BWQh69FFVCKlgedX0PeAItEebKH8gjzAEgrWr0A8fQMfOfgi7WA0nRHTfDzeEBHk3Ni00nhviCJaE"
 	params := &stripe.PaymentIntentParams{
 		Amount:             stripe.Int64(req.Amount),
 		Currency:           stripe.String(req.Currency),
-		PaymentMethodTypes: stripe.StringSlice([]string{req.PaymentMethodID}),
+		PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
+		PaymentMethod: stripe.String("pm_card_visa"),
+    Confirm:       stripe.Bool(true),
 	}
 
 	paymentIntent, err := stripePaymentIntent.New(params)
