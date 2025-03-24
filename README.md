@@ -41,7 +41,7 @@ The **Payment Processing System** is a backend microservices-based project that 
 ### Running the Services
 ```sh
 # Clone the repository
-git clone https://github.com/yourusername/payment-processing-system.git
+git clone https://github.com/Rahul13900/Payment-Processing-System.git
 cd payment-processing-system
 
 # Start PostgreSQL and Kafka (Docker recommended)
