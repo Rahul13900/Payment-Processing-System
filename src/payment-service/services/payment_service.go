@@ -16,21 +16,22 @@ type PaymentServiceInterface interface {
 	HandleWebhook(event models.StripeWebhookEvent) error
 }
 
-
 // paymentService implements PaymentServiceInterface
 type paymentService struct {
-	db       *store.PostgresStore
-	producer KafkaProducerInterface
+	db        *store.PostgresStore
+	producer  KafkaProducerInterface
+	stripeSec string
 }
 
 // Ensure paymentService implements PaymentServiceInterface
 var _ PaymentServiceInterface = (*paymentService)(nil)
 
 // NewPaymentService initializes a new PaymentService
-func NewPaymentService(db *store.PostgresStore, producer KafkaProducerInterface) PaymentServiceInterface {
+func NewPaymentService(db *store.PostgresStore, producer KafkaProducerInterface, secret string) PaymentServiceInterface {
 	return &paymentService{
-		db:       db,
-		producer: producer,
+		db:        db,
+		producer:  producer,
+		stripeSec: secret,
 	}
 }
 
@@ -39,13 +40,13 @@ func (s *paymentService) ProcessPayment(req models.PaymentRequest) (*models.Paym
 	if req.Amount <= 0 {
 		return nil, errors.New("invalid payment amount")
 	}
-	stripe.Key = "sk_test_51QuW19RxJOEMEci0mHGC0BWQh69FFVCKlgedX0PeAItEebKH8gjzAEgrWr0A8fQMfOfgi7WA0nRHTfDzeEBHk3Ni00nhviCJaE"
+	stripe.Key = s.stripeSec
 	params := &stripe.PaymentIntentParams{
 		Amount:             stripe.Int64(req.Amount),
 		Currency:           stripe.String(req.Currency),
 		PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
-		PaymentMethod: stripe.String("pm_card_visa"),
-    Confirm:       stripe.Bool(true),
+		PaymentMethod:      stripe.String("pm_card_visa"),
+		Confirm:            stripe.Bool(true),
 	}
 
 	paymentIntent, err := stripePaymentIntent.New(params)

@@ -32,7 +32,7 @@ func NewKafkaProducer(broker string) *KafkaProducer {
 }
 
 // Publish sends a message to Kafka
-func (kp *KafkaProducer) Publish(topic string, event models.PaymentEvent) error {
+func (kp *KafkaProducer)  Publish(topic string, event models.PaymentEvent) error {
 	message, err := json.Marshal(event)
 	if err != nil {
 		log.Printf("Failed to marshal event: %v", err)

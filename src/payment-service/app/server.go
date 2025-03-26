@@ -34,7 +34,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	kafkaProducer := services.NewKafkaProducer(cfg.KafkaBroker) // No error return needed
 
 	// Initialize Services
-	paymentService := services.NewPaymentService(store, kafkaProducer)
+	paymentService := services.NewPaymentService(store, kafkaProducer, cfg.StripeSecret)
 
 	// Initialize Handlers
 	paymentHandler := handlers.NewPaymentHandler(paymentService)
